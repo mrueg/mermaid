@@ -35,6 +35,7 @@ import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
 import { multiRect } from './shapes/multiRect.js';
 import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { note } from './shapes/note.js';
+import { octagon } from './shapes/octagon.js';
 import { question } from './shapes/question.js';
 import { rect_left_inv_arrow } from './shapes/rectLeftInvArrow.js';
 import { rectWithTitle } from './shapes/rectWithTitle.js';
@@ -54,6 +55,7 @@ import { tiltedCylinder } from './shapes/tiltedCylinder.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
 import { triangle } from './shapes/triangle.js';
+import { triangleRight } from './shapes/triangleRight.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
@@ -94,7 +96,7 @@ export const shapesDefs = [
     name: 'Rectangle',
     shortName: 'rect',
     description: 'Standard process shape',
-    aliases: ['proc', 'process', 'rectangle'],
+    aliases: ['proc', 'process', 'rectangle', 'tt-platform', 'platform-team'],
     internalAliases: ['squareRect'],
     handler: squareRect,
   },
@@ -103,7 +105,7 @@ export const shapesDefs = [
     name: 'Rounded Rectangle',
     shortName: 'rounded',
     description: 'Represents an event',
-    aliases: ['event'],
+    aliases: ['event', 'tt-stream', 'stream-aligned-team', 'tt-enabling', 'enabling-team'],
     internalAliases: ['roundedRect'],
     handler: roundedRect,
   },
@@ -136,7 +138,7 @@ export const shapesDefs = [
     name: 'Circle',
     shortName: 'circle',
     description: 'Starting point',
-    aliases: ['circ'],
+    aliases: ['circ', 'tt-facilitation', 'facilitation'],
     handler: circle,
   },
   {
@@ -185,7 +187,7 @@ export const shapesDefs = [
     name: 'Lean Left',
     shortName: 'lean-l',
     description: 'Represents output or input',
-    aliases: ['lean-left', 'out-in'],
+    aliases: ['lean-left', 'out-in', 'tt-collab', 'collaboration'],
     internalAliases: ['lean_left'],
     handler: lean_left,
   },
@@ -360,6 +362,14 @@ export const shapesDefs = [
     handler: triangle,
   },
   {
+    semanticName: 'X-as-a-Service',
+    name: 'Triangle Right',
+    shortName: 'tri-right',
+    description: 'Right-pointing triangle — service provider on the base (left), consumer at the tip (right)',
+    aliases: ['tt-xaas', 'x-as-a-service'],
+    handler: triangleRight,
+  },
+  {
     semanticName: 'Internal Storage',
     name: 'Window Pane',
     shortName: 'win-pane',
@@ -470,6 +480,14 @@ export const shapesDefs = [
     description: 'Lined document',
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
+  },
+  {
+    semanticName: 'Complicated Subsystem',
+    name: 'Octagon',
+    shortName: 'oct',
+    description: 'Complicated subsystem (Team Topologies)',
+    aliases: ['octagon', 'tt-complicated', 'complicated-subsystem'],
+    handler: octagon,
   },
 ] as const satisfies ShapeDefinition[];
 

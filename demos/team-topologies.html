@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Team Topologies Shapes</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        max-width: 960px;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin: 12px 0 4px;
+        font-size: 0.9em;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend-swatch {
+        display: inline-block;
+        width: 36px;
+        height: 18px;
+        border: 2px solid;
+        flex-shrink: 0;
+      }
+      .legend-swatch.circle {
+        border-radius: 50%;
+        width: 18px;
+      }
+    </style>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+
+      /**
+       * After Mermaid renders an SVG, shift interaction-mode connector nodes
+       * (classDef classes "co", "fa", "xa") so they overlap their left and right
+       * team neighbours by OVERLAP pixels — matching the official Team Topologies
+       * visual convention where the interaction symbol straddles the team boundary.
+       *
+       * Mermaid's dagre layout places nodes with rankSpacing (default 50 px) between
+       * each pair.  We compute the actual gap from the rendered bounding boxes and
+       * translate the connector and its right-side neighbour to eliminate the gap and
+       * create the desired overlap.  The SVG viewBox is then updated so nothing is clipped.
+       */
+      function applyTTOverlap(svg) {
+        const CONNECTOR_CLASSES = new Set(['co', 'fa', 'xa']);
+        const OVERLAP = 20; // px each side of connector overlaps into adjacent team node
+
+        function getXY(el) {
+          const m = (el.getAttribute('transform') || '').match(
+            /translate\(\s*([^,\s)]+)[\s,]+([^,\s)]+)/
+          );
+          return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : null;
+        }
+        function setXY(el, x, y) {
+          el.setAttribute('transform', `translate(${x}, ${y})`);
+        }
+
+        const allNodes = [...svg.querySelectorAll('g.node')];
+        const connectors = allNodes.filter((n) =>
+          [...n.classList].some((c) => CONNECTOR_CLASSES.has(c))
+        );
+        if (!connectors.length) return;
+
+        for (const conn of connectors) {
+          const connPos = getXY(conn);
+          if (!connPos) continue;
+          const connBBox = conn.getBBox();
+          // connBBox.x is negative (= -halfWidth) since nodes are centred on their translate point
+          const connLeftEdge = connPos.x + connBBox.x;
+          const connRightEdgeOffset = connBBox.x + connBBox.width; // = +halfWidth
+
+          // Nodes on the same horizontal rank (same y within 5 px tolerance)
+          const sameRank = allNodes.filter((n) => {
+            if (n === conn) return false;
+            const pos = getXY(n);
+            return pos && Math.abs(pos.y - connPos.y) < 5;
+          });
+
+          // Closest left neighbour
+          const leftNode = sameRank
+            .filter((n) => getXY(n).x < connPos.x)
+            .sort((a, b) => getXY(b).x - getXY(a).x)[0];
+          if (!leftNode) continue;
+
+          const leftBBox = leftNode.getBBox();
+          const leftRightEdge = getXY(leftNode).x + leftBBox.x + leftBBox.width;
+          const gapLeft = connLeftEdge - leftRightEdge; // current gap (≈ rankSpacing)
+
+          // Translate connector left so its left edge is OVERLAP px inside the left team node
+          const shift = gapLeft + OVERLAP;
+          const newConnX = connPos.x - shift;
+          setXY(conn, newConnX, connPos.y);
+
+          const newConnRightEdge = newConnX + connRightEdgeOffset;
+
+          // Translate right neighbour(s) so their left edge is OVERLAP px inside the connector
+          const rightNodes = sameRank
+            .filter((n) => getXY(n).x > connPos.x)
+            .sort((a, b) => getXY(a).x - getXY(b).x);
+
+          for (const rightNode of rightNodes) {
+            const rightPos = getXY(rightNode);
+            const rightBBoxX = rightNode.getBBox().x; // negative (= -halfWidth)
+            const desiredLeftEdge = newConnRightEdge - OVERLAP;
+            setXY(rightNode, desiredLeftEdge - rightBBoxX, rightPos.y);
+          }
+        }
+
+        // Recompute viewBox to avoid clipping after nodes have shifted
+        const nodesGroup = svg.querySelector('g.nodes');
+        if (nodesGroup) {
+          const bb = nodesGroup.getBBox();
+          const pad = 20;
+          svg.setAttribute(
+            'viewBox',
+            `${bb.x - pad} ${bb.y - pad} ${bb.width + 2 * pad} ${bb.height + 2 * pad}`
+          );
+          svg.style.width = `${bb.width + 2 * pad}px`;
+          svg.style.height = `${bb.height + 2 * pad}px`;
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        await mermaid.run();
+        document.querySelectorAll('.mermaid svg').forEach(applyTTOverlap);
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Team Topologies Shapes</h1>
+    <p>
+      Colors match the official
+      <a href="https://github.com/TeamTopologies/Team-Shape-Templates"
+        >Team Topologies shape templates</a
+      >. Interaction mode connectors overlap their adjacent team nodes on both sides (50%
+      fill-opacity) to convey their transient nature. The connector shape itself identifies the
+      interaction mode — no label needed.
+    </p>
+
+    <h2>Team Shapes</h2>
+    <div class="legend">
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#FFEDB8;border-color:#FFD966"></span>
+        Stream-aligned (rounded rectangle)
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#C9DFBE;border-color:#6AA84F"></span>
+        Enabling (rounded rectangle)
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#FBDBBA;border-color:#F6B26B"></span>
+        Complicated Subsystem (octagon)
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#BBD2F6;border-color:#6D9EEB"></span>
+        Platform (rectangle)
+      </div>
+    </div>
+    <pre class="mermaid">
+flowchart LR
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
+  classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
+  classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
+  A@{ shape: tt-stream, label: "Stream-aligned" }
+  B@{ shape: tt-enabling, label: "Enabling" }
+  C@{ shape: tt-complicated, label: "Complicated\nSubsystem" }
+  D@{ shape: tt-platform, label: "Platform" }
+  class A sa
+  class B en
+  class C cs
+  class D pl
+</pre
+    >
+
+    <h2>Interaction Mode Connectors</h2>
+    <div class="legend">
+      <div class="legend-item">
+        <span
+          class="legend-swatch"
+          style="background:#E3E0EE;border-color:#967EE2;opacity:0.8"
+        ></span>
+        Collaboration (parallelogram)
+      </div>
+      <div class="legend-item">
+        <span
+          class="legend-swatch circle"
+          style="background:#E3EFDE;border-color:#78996B;opacity:0.8"
+        ></span>
+        Facilitation (circle)
+      </div>
+      <div class="legend-item">
+        <span
+          class="legend-swatch"
+          style="background:#DAE8FC;border-color:#6C8EBF;opacity:0.8"
+        ></span>
+        X-as-a-Service (right-pointing triangle — base=provider, tip=consumer)
+      </div>
+    </div>
+
+    <h3>Collaboration</h3>
+    <pre class="mermaid">
+flowchart LR
+  classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef co fill:#E3E0EE,stroke:#967EE2,color:transparent,fill-opacity:0.5
+  cs1@{ shape: tt-complicated, label: "Complicated\nSubsystem" }
+  collab@{ shape: tt-collab, label: "Collaboration" }
+  sa1@{ shape: tt-stream, label: "Stream-aligned" }
+  cs1 ~~~ collab ~~~ sa1
+  class cs1 cs
+  class sa1 sa
+  class collab co
+</pre
+    >
+
+    <h3>Facilitation</h3>
+    <pre class="mermaid">
+flowchart LR
+  classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef fa fill:#E3EFDE,stroke:#78996B,color:transparent,fill-opacity:0.5
+  en1@{ shape: tt-enabling, label: "Enabling" }
+  facil@{ shape: tt-facilitation, label: "Facilitation" }
+  sa1@{ shape: tt-stream, label: "Stream-aligned" }
+  en1 ~~~ facil ~~~ sa1
+  class en1 en
+  class sa1 sa
+  class facil fa
+</pre
+    >
+
+    <h3>X-as-a-Service</h3>
+    <p>Base of triangle (left) = provider &nbsp;·&nbsp; Tip of triangle (right) = consumer</p>
+    <pre class="mermaid">
+flowchart LR
+  classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:transparent,fill-opacity:0.5
+  pl1@{ shape: tt-platform, label: "Platform\n(provider)" }
+  xaas@{ shape: tt-xaas, label: "XaaS" }
+  sa1@{ shape: tt-stream, label: "Stream-aligned\n(consumer)" }
+  pl1 ~~~ xaas ~~~ sa1
+  class pl1 pl
+  class sa1 sa
+  class xaas xa
+</pre
+    >
+
+    <h2>Complex Example — E-Commerce Platform</h2>
+    <p>
+      Four interactions across a realistic topology: the Dev Platform provides services to two
+      stream teams via X-as-a-Service; the QA Enablement team facilitates the Cart team; and the
+      Payment Gateway collaborates with the Checkout team. Each interaction is a separate chain
+      (<code>team ~~~ connector ~~~ team</code>). Connector shapes carry no text label — the shape
+      and color identify the interaction mode.
+    </p>
+    <pre class="mermaid">
+flowchart LR
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
+  classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
+  classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
+  classDef co fill:#E3E0EE,stroke:#967EE2,color:transparent,fill-opacity:0.5
+  classDef fa fill:#E3EFDE,stroke:#78996B,color:transparent,fill-opacity:0.5
+  classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:transparent,fill-opacity:0.5
+
+  p1@{ shape: tt-platform, label: "Dev Platform" }
+  xa1@{ shape: tt-xaas, label: "XaaS" }
+  cart1@{ shape: tt-stream, label: "Cart Team" }
+
+  p2@{ shape: tt-platform, label: "Dev Platform" }
+  xa2@{ shape: tt-xaas, label: "XaaS" }
+  checkout1@{ shape: tt-stream, label: "Checkout Team" }
+
+  en1@{ shape: tt-enabling, label: "QA Enablement" }
+  fa1@{ shape: tt-facilitation, label: "Facilitation" }
+  cart2@{ shape: tt-stream, label: "Cart Team" }
+
+  cs1@{ shape: tt-complicated, label: "Payment\nGateway" }
+  co1@{ shape: tt-collab, label: "Collaboration" }
+  checkout2@{ shape: tt-stream, label: "Checkout Team" }
+
+  p1 ~~~ xa1 ~~~ cart1
+  p2 ~~~ xa2 ~~~ checkout1
+  en1 ~~~ fa1 ~~~ cart2
+  cs1 ~~~ co1 ~~~ checkout2
+
+  class cart1,cart2,checkout1,checkout2 sa
+  class en1 en
+  class cs1 cs
+  class p1,p2 pl
+  class co1 co
+  class fa1 fa
+  class xa1,xa2 xa
+</pre
+    >
+  </body>
+</html>

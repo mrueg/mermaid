@@ -48,6 +48,9 @@ const newShapesSet5 = [
 ] as const;
 
 const newShapesSet6 = ['brace-r', 'braces'] as const;
+
+const newShapesSet7 = ['octagon', 'complicated-subsystem'] as const;
+
 // Aggregate all shape sets into a single array
 const newShapesSets = [
   newShapesSet1,
@@ -56,6 +59,7 @@ const newShapesSets = [
   newShapesSet4,
   newShapesSet5,
   newShapesSet6,
+  newShapesSet7,
 ];
 
 looks.forEach((look) => {

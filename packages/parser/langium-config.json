@@ -35,6 +35,11 @@
       "id": "treemap",
       "grammar": "src/language/treemap/treemap.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "teamTopology",
+      "grammar": "src/language/teamTopology/teamTopology.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

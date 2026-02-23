@@ -13,6 +13,8 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  TeamTopology,
+  TeamTopologyServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -21,6 +23,7 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createTeamTopologyServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -105,3 +108,14 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const teamTopologyServices: TeamTopologyServices = createTeamTopologyServices().TeamTopology;
+const teamTopologyParser: LangiumParser = teamTopologyServices.parser.LangiumParser;
+export function createTeamTopologyTestServices() {
+  const parse = (input: string) => {
+    return teamTopologyParser.parse<TeamTopology>(input);
+  };
+
+  return { services: teamTopologyServices, parse };
+}
+export const teamTopologyParse = createTeamTopologyTestServices().parse;
