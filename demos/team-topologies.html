@@ -13,91 +13,87 @@
 <p>
   Colors match the official
   <a href="https://github.com/TeamTopologies/Team-Shape-Templates">Team Topologies shape templates</a>.
-  Interaction mode nodes use 50% fill-opacity to convey their transient nature,
-  per Team Topologies design guidelines.
+  Interaction modes (Collaboration, Facilitation, X-as-a-Service) appear as connector shapes
+  on the line between two teams — not as endpoint nodes.
+  They use 50% fill-opacity to convey their transient nature per Team Topologies design guidelines.
 </p>
 
-<h2>Stream-aligned Team</h2>
+<h2>Team Shapes</h2>
 <pre class="mermaid">
 flowchart LR
-  classDef streamAligned fill:#FFEDB8,stroke:#FFD966,color:#000000
-  A@{ shape: tt-stream, label: "Stream Team A" }
-  B@{ shape: stream-aligned-team, label: "Stream Team B" }
-  A --> B
-  class A,B streamAligned
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
+  classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
+  classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
+  A@{ shape: tt-stream, label: "Stream-aligned" }
+  B@{ shape: tt-enabling, label: "Enabling" }
+  C@{ shape: tt-complicated, label: "Complicated Subsystem" }
+  D@{ shape: tt-platform, label: "Platform" }
+  class A sa
+  class B en
+  class C cs
+  class D pl
 </pre>
 
-<h2>Enabling Team</h2>
+<h2>Collaboration (interaction mode connector)</h2>
+<p>Complicated Subsystem team collaborates with Stream-aligned team — the parallelogram shape sits on the connection line.</p>
 <pre class="mermaid">
 flowchart LR
-  classDef enabling fill:#C9DFBE,stroke:#6AA84F,color:#000000
-  A@{ shape: tt-enabling, label: "Enabling Team" }
-  B@{ shape: enabling-team, label: "Enabling Team 2" }
-  A --> B
-  class A,B enabling
+  classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef co fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
+  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }
+  collab@{ shape: tt-collab, label: "Collaboration" }
+  sa1@{ shape: tt-stream, label: "Stream-aligned" }
+  cs1 --- collab --- sa1
+  class cs1 cs
+  class sa1 sa
+  class collab co
 </pre>
 
-<h2>Complicated Subsystem Team</h2>
+<h2>Facilitation (interaction mode connector)</h2>
+<p>Enabling team facilitates Stream-aligned team — the circle shape sits on the connection line.</p>
 <pre class="mermaid">
 flowchart LR
-  classDef complicated fill:#FBDBBA,stroke:#F6B26B,color:#000000
-  A@{ shape: tt-complicated, label: "Complicated Subsystem" }
-  B@{ shape: complicated-subsystem, label: "Complicated Subsystem 2" }
-  C@{ shape: oct, label: "Octagon" }
-  A --> B --> C
-  class A,B,C complicated
+  classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef fa fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
+  en1@{ shape: tt-enabling, label: "Enabling" }
+  facil@{ shape: tt-facilitation, label: "Facilitation" }
+  sa1@{ shape: tt-stream, label: "Stream-aligned" }
+  en1 --- facil --- sa1
+  class en1 en
+  class sa1 sa
+  class facil fa
 </pre>
 
-<h2>Platform Team</h2>
+<h2>X-as-a-Service (interaction mode connector)</h2>
+<p>Platform team provides a service consumed by Stream-aligned team — the triangle shape sits on the connection line.</p>
 <pre class="mermaid">
 flowchart LR
-  classDef platform fill:#BBD2F6,stroke:#6D9EEB,color:#000000
-  A@{ shape: tt-platform, label: "Platform Team" }
-  B@{ shape: platform-team, label: "Platform Team 2" }
-  A --> B
-  class A,B platform
-</pre>
-
-<h2>Collaboration (interaction mode)</h2>
-<pre class="mermaid">
-flowchart LR
-  classDef collaboration fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
-  A@{ shape: tt-collab, label: "Collaboration" }
-  B@{ shape: collaboration, label: "Collaboration 2" }
-  A --> B
-  class A,B collaboration
-</pre>
-
-<h2>Facilitation (interaction mode)</h2>
-<pre class="mermaid">
-flowchart LR
-  classDef facilitation fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
-  A@{ shape: tt-facilitation, label: "Facilitation" }
-  B@{ shape: facilitation, label: "Facilitation 2" }
-  A --> B
-  class A,B facilitation
-</pre>
-
-<h2>X-as-a-Service (interaction mode)</h2>
-<pre class="mermaid">
-flowchart LR
-  classDef xaas fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
-  A@{ shape: tt-xaas, label: "XaaS" }
-  B@{ shape: x-as-a-service, label: "X-as-a-Service" }
-  A --> B
-  class A,B xaas
+  classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
+  pl1@{ shape: tt-platform, label: "Platform" }
+  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }
+  sa1@{ shape: tt-stream, label: "Stream-aligned" }
+  pl1 --- xaas --- sa1
+  class pl1 pl
+  class sa1 sa
+  class xaas xa
 </pre>
 
 <h2>Full Team Topology Example</h2>
+<p>Interaction mode shapes sit on the connection lines between teams. No arrowheads — direction is not implied by the interaction modes.</p>
 <pre class="mermaid">
 flowchart LR
-  classDef streamAligned fill:#FFEDB8,stroke:#FFD966,color:#000000
-  classDef enabling fill:#C9DFBE,stroke:#6AA84F,color:#000000
-  classDef complicated fill:#FBDBBA,stroke:#F6B26B,color:#000000
-  classDef platform fill:#BBD2F6,stroke:#6D9EEB,color:#000000
-  classDef collaboration fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
-  classDef facilitation fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
-  classDef xaas fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
+  classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
+  classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
+  classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
+  classDef co fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
+  classDef fa fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
+  classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
 
   sa1@{ shape: tt-stream, label: "Stream A" }
   sa2@{ shape: tt-stream, label: "Stream B" }
@@ -110,20 +106,17 @@ flowchart LR
 
   pl1 --- sa1
   pl1 --- sa2
-  en1 --- facil
-  facil --- sa1
-  cs1 --- collab
-  collab --- sa2
-  sa1 --- xaas
-  xaas --- sa2
+  en1 --- facil --- sa1
+  cs1 --- collab --- sa2
+  sa1 --- xaas --- sa2
 
-  class sa1,sa2 streamAligned
-  class en1 enabling
-  class cs1 complicated
-  class pl1 platform
-  class collab collaboration
-  class facil facilitation
-  class xaas xaas
+  class sa1,sa2 sa
+  class en1 en
+  class cs1 cs
+  class pl1 pl
+  class collab co
+  class facil fa
+  class xaas xa
 </pre>
 </body>
 </html>
