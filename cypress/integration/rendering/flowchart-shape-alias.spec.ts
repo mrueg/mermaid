@@ -86,6 +86,21 @@ const aliasSet39 = ['tag-rect', 'tag-proc', 'tagged-rectangle', 'tagged-process'
 
 const aliasSet40 = ['collate', 'hourglass'] as const;
 
+// Team Topologies alias sets
+const aliasSet41 = ['tt-stream', 'stream-aligned-team', 'rounded', 'event'] as const;
+
+const aliasSet42 = ['tt-enabling', 'enabling-team'] as const;
+
+const aliasSet43 = ['oct', 'octagon', 'tt-complicated', 'complicated-subsystem'] as const;
+
+const aliasSet44 = ['tt-platform', 'platform-team', 'rect', 'process'] as const;
+
+const aliasSet45 = ['tt-collab', 'collaboration', 'lean-l', 'out-in'] as const;
+
+const aliasSet46 = ['tt-facilitation', 'facilitation', 'circle', 'circ'] as const;
+
+const aliasSet47 = ['tt-xaas', 'x-as-a-service', 'tri', 'triangle'] as const;
+
 // Aggregate all alias sets into a single array
 const aliasSets = [
   aliasSet1,
@@ -127,6 +142,13 @@ const aliasSets = [
   aliasSet37,
   aliasSet38,
   aliasSet39,
+  aliasSet41,
+  aliasSet42,
+  aliasSet43,
+  aliasSet44,
+  aliasSet45,
+  aliasSet46,
+  aliasSet47,
 ] as const;
 
 aliasSets.forEach((aliasSet) => {

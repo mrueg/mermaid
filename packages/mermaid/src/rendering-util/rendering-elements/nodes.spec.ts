@@ -233,4 +233,48 @@ describe('Test Alias for shapes', function () {
     expect(shapes['tagged-rectangle']).toBe(shapes['tag-rect']);
     expect(shapes['tagged-process']).toBe(shapes['tag-rect']);
   });
+
+  // Team Topologies shapes
+  // tt-stream | stream-aligned-team
+  it('should support Team Topologies alias for stream-aligned team shape', function () {
+    expect(shapes['tt-stream']).toBe(shapes.rounded);
+    expect(shapes['stream-aligned-team']).toBe(shapes.rounded);
+  });
+
+  // tt-enabling | enabling-team
+  it('should support Team Topologies alias for enabling team shape', function () {
+    expect(shapes['tt-enabling']).toBe(shapes.rounded);
+    expect(shapes['enabling-team']).toBe(shapes.rounded);
+  });
+
+  // tt-complicated | complicated-subsystem | oct | octagon
+  it('should support Team Topologies alias for complicated subsystem team shape', function () {
+    expect(shapes['tt-complicated']).toBe(shapes.oct);
+    expect(shapes['complicated-subsystem']).toBe(shapes.oct);
+    expect(shapes.octagon).toBe(shapes.oct);
+  });
+
+  // tt-platform | platform-team
+  it('should support Team Topologies alias for platform team shape', function () {
+    expect(shapes['tt-platform']).toBe(shapes.rect);
+    expect(shapes['platform-team']).toBe(shapes.rect);
+  });
+
+  // tt-collab | collaboration
+  it('should support Team Topologies alias for collaboration interaction mode shape', function () {
+    expect(shapes['tt-collab']).toBe(shapes['lean-l']);
+    expect(shapes.collaboration).toBe(shapes['lean-l']);
+  });
+
+  // tt-facilitation | facilitation
+  it('should support Team Topologies alias for facilitation interaction mode shape', function () {
+    expect(shapes['tt-facilitation']).toBe(shapes.circle);
+    expect(shapes.facilitation).toBe(shapes.circle);
+  });
+
+  // tt-xaas | x-as-a-service
+  it('should support Team Topologies alias for x-as-a-service interaction mode shape', function () {
+    expect(shapes['tt-xaas']).toBe(shapes.tri);
+    expect(shapes['x-as-a-service']).toBe(shapes.tri);
+  });
 });
