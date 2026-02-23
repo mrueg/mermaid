@@ -27,8 +27,7 @@ describe('teamTopology', () => {
       const context = `teamTopology title My Team Topology`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      const { title } = result.value;
-      expect(title).toBe('My Team Topology');
+      expect(result.value.title).toBe('My Team Topology');
     });
 
     it('should handle accTitle', () => {
@@ -47,150 +46,192 @@ describe('teamTopology', () => {
   });
 
   describe('should handle team declarations', () => {
-    it('should parse a stream-aligned team', () => {
+    it('should parse a stream-aligned team with bare name', () => {
+      // From issue #4659: f1#Stream
       const context = `teamTopology
-  teamA[Stream Team A] stream-aligned`;
+  f1#Stream`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       const team = result.value.teams[0];
-      expect(team.id).toBe('teamA');
-      expect(team.label).toBe('Stream Team A');
-      expect(team.type).toBe('stream-aligned');
+      expect(team.name).toBe('f1');
+      expect(team.type).toBe('Stream');
+    });
+
+    it('should parse a stream-aligned team with quoted name', () => {
+      // From issue #4659: "Stream A"#Stream
+      const context = `teamTopology
+  "Stream A"#Stream`;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      const team = result.value.teams[0];
+      expect(team.name).toBe('Stream A');
+      expect(team.type).toBe('Stream');
+    });
+
+    it('should parse a complicated subsystem team', () => {
+      // From issue #4659: "Complicated Subsystem"#Complicated
+      const context = `teamTopology
+  "Complicated Subsystem"#Complicated`;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      const team = result.value.teams[0];
+      expect(team.name).toBe('Complicated Subsystem');
+      expect(team.type).toBe('Complicated');
     });
 
     it('should parse an enabling team', () => {
       const context = `teamTopology
-  teamB[Enabling Team B] enabling`;
+  "Enabling Team"#Enabling`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       const team = result.value.teams[0];
-      expect(team.id).toBe('teamB');
-      expect(team.label).toBe('Enabling Team B');
-      expect(team.type).toBe('enabling');
-    });
-
-    it('should parse a complicated-subsystem team', () => {
-      const context = `teamTopology
-  teamC[Complicated Subsystem C] complicated-subsystem`;
-      const result = parse(context);
-      expectNoErrorsOrAlternatives(result);
-      const team = result.value.teams[0];
-      expect(team.id).toBe('teamC');
-      expect(team.label).toBe('Complicated Subsystem C');
-      expect(team.type).toBe('complicated-subsystem');
+      expect(team.name).toBe('Enabling Team');
+      expect(team.type).toBe('Enabling');
     });
 
     it('should parse a platform team', () => {
       const context = `teamTopology
-  teamD[Platform D] platform`;
+  "Platform Team"#Platform`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       const team = result.value.teams[0];
-      expect(team.id).toBe('teamD');
-      expect(team.label).toBe('Platform D');
-      expect(team.type).toBe('platform');
-    });
-
-    it('should parse team with quoted label', () => {
-      const context = `teamTopology
-  teamA["Stream-aligned Team A"] stream-aligned`;
-      const result = parse(context);
-      expectNoErrorsOrAlternatives(result);
-      const team = result.value.teams[0];
-      expect(team.id).toBe('teamA');
-      expect(team.label).toBe('Stream-aligned Team A');
-      expect(team.type).toBe('stream-aligned');
+      expect(team.name).toBe('Platform Team');
+      expect(team.type).toBe('Platform');
     });
 
     it('should parse multiple teams', () => {
       const context = `teamTopology
-  sa[Stream Team A] stream-aligned
-  en[Enabling Team] enabling
-  cs[Complicated Subsystem] complicated-subsystem
-  pl[Platform] platform`;
+  "Stream A"#Stream
+  "Stream B"#Stream
+  "Enabling Team"#Enabling
+  "Complicated Subsystem"#Complicated
+  "Platform"#Platform`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.teams).toHaveLength(4);
-      expect(result.value.teams[0].type).toBe('stream-aligned');
-      expect(result.value.teams[1].type).toBe('enabling');
-      expect(result.value.teams[2].type).toBe('complicated-subsystem');
-      expect(result.value.teams[3].type).toBe('platform');
+      expect(result.value.teams).toHaveLength(5);
+      expect(result.value.teams[0].type).toBe('Stream');
+      expect(result.value.teams[1].type).toBe('Stream');
+      expect(result.value.teams[2].type).toBe('Enabling');
+      expect(result.value.teams[3].type).toBe('Complicated');
+      expect(result.value.teams[4].type).toBe('Platform');
     });
   });
 
   describe('should handle interaction declarations', () => {
-    it('should parse a collaboration interaction', () => {
+    it('should parse a XaaS interaction with single arrow', () => {
+      // From issue #4659: f1--XaaS->f2
       const context = `teamTopology
-  sa[Stream A] stream-aligned
-  cs[Complicated Subsystem] complicated-subsystem
-  sa collaboration cs`;
+  f1#Stream
+  f2#Stream
+  f1--XaaS->f2`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       const interaction = result.value.interactions[0];
-      expect(interaction.lhsId).toBe('sa');
-      expect(interaction.mode).toBe('collaboration');
-      expect(interaction.rhsId).toBe('cs');
+      expect(interaction.lhs).toBe('f1');
+      expect(interaction.mode).toBe('XaaS');
+      expect(interaction.arrow).toBe('->');
+      expect(interaction.rhs).toBe('f2');
     });
 
-    it('should parse a facilitation interaction', () => {
+    it('should parse a Facilitation interaction with single arrow', () => {
+      // From issue #4659: "Enabling Team A"--Facilitation->"Stream A"
       const context = `teamTopology
-  en[Enabling Team] enabling
-  sa[Stream A] stream-aligned
-  en facilitation sa`;
+  "Enabling Team A"#Enabling
+  "Stream A"#Stream
+  "Enabling Team A"--Facilitation->"Stream A"`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       const interaction = result.value.interactions[0];
-      expect(interaction.lhsId).toBe('en');
-      expect(interaction.mode).toBe('facilitation');
-      expect(interaction.rhsId).toBe('sa');
+      expect(interaction.lhs).toBe('Enabling Team A');
+      expect(interaction.mode).toBe('Facilitation');
+      expect(interaction.arrow).toBe('->');
+      expect(interaction.rhs).toBe('Stream A');
     });
 
-    it('should parse an x-as-a-service interaction', () => {
+    it('should parse a Collaboration interaction with double arrow', () => {
+      // From issue #4659: "Complicated Subsystem team"--Collaboration-->"Stream A"
       const context = `teamTopology
-  pl[Platform] platform
-  sa[Stream A] stream-aligned
-  pl x-as-a-service sa`;
+  "Complicated Subsystem team"#Complicated
+  "Stream A"#Stream
+  "Complicated Subsystem team"--Collaboration-->"Stream A"`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       const interaction = result.value.interactions[0];
-      expect(interaction.lhsId).toBe('pl');
-      expect(interaction.mode).toBe('x-as-a-service');
-      expect(interaction.rhsId).toBe('sa');
+      expect(interaction.lhs).toBe('Complicated Subsystem team');
+      expect(interaction.mode).toBe('Collaboration');
+      expect(interaction.arrow).toBe('-->');
+      expect(interaction.rhs).toBe('Stream A');
     });
 
     it('should parse multiple interactions', () => {
       const context = `teamTopology
-  sa[Stream A] stream-aligned
-  sa2[Stream B] stream-aligned
-  en[Enabling Team] enabling
-  pl[Platform] platform
-  en facilitation sa
-  pl x-as-a-service sa2
-  sa collaboration sa2`;
+  "Stream A"#Stream
+  "Stream B"#Stream
+  "Enabling Team"#Enabling
+  "Platform"#Platform
+  "Enabling Team"--Facilitation->"Stream A"
+  "Platform"--XaaS->"Stream B"
+  "Stream A"--Collaboration-->"Stream B"`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.interactions).toHaveLength(3);
+      expect(result.value.interactions[0].mode).toBe('Facilitation');
+      expect(result.value.interactions[1].mode).toBe('XaaS');
+      expect(result.value.interactions[2].mode).toBe('Collaboration');
     });
   });
 
   describe('should handle full diagrams', () => {
+    it('should parse the example from issue #4659', () => {
+      // Minimal example from issue: f1#Stream / f2#Stream / f1--XaaS->f2
+      const context = `teamTopology
+  f1#Stream
+  f2#Stream
+  f1--XaaS->f2`;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(TeamTopology.$type);
+      expect(result.value.teams).toHaveLength(2);
+      expect(result.value.interactions).toHaveLength(1);
+    });
+
     it('should parse a complete team topology diagram', () => {
       const context = `teamTopology
   title Team Topology Example
-  sa1[Stream A] stream-aligned
-  sa2[Stream B] stream-aligned
-  en[Enabling Team] enabling
-  cs[Complicated Subsystem] complicated-subsystem
-  pl[Platform] platform
-  en facilitation sa1
-  cs collaboration sa1
-  pl x-as-a-service sa2`;
+  "Stream A"#Stream
+  "Stream B"#Stream
+  "Enabling Team"#Enabling
+  "Complicated Subsystem"#Complicated
+  "Platform"#Platform
+  "Enabling Team"--Facilitation->"Stream A"
+  "Complicated Subsystem"--Collaboration-->"Stream A"
+  "Platform"--XaaS->"Stream B"`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(TeamTopology.$type);
       expect(result.value.title).toBe('Team Topology Example');
       expect(result.value.teams).toHaveLength(5);
       expect(result.value.interactions).toHaveLength(3);
+    });
+
+    it('should parse the extended example from issue #4659', () => {
+      const context = `teamTopology
+  "Stream A"#Stream
+  "Stream B"#Stream
+  "Stream C"#Stream
+  "Stream D"#Stream
+  "Complicated Subsystem team"#Complicated
+  "Enabling Team A"#Enabling
+  "Enabling Team A"--Facilitation->"Stream A"
+  "Complicated Subsystem team"--Collaboration-->"Stream A"
+  "Complicated Subsystem team"--XaaS->"Stream B"
+  "Stream D"--XaaS->"Stream C"
+  "Stream D"--XaaS->"Stream B"
+  "Stream D"--Collaboration-->"Stream C"`;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.teams).toHaveLength(6);
+      expect(result.value.interactions).toHaveLength(6);
     });
   });
 });

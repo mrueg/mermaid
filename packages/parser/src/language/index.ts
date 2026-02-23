@@ -14,7 +14,7 @@ export {
   Merge,
   Statement,
   TeamTopology,
-  Team,
+  TeamDeclaration,
   Interaction,
   isInfo,
   isPacket,
@@ -28,7 +28,7 @@ export {
   isCommit,
   isMerge,
   isTeamTopology,
-  isTeam,
+  isTeamDeclaration,
   isInteraction,
 } from './generated/ast.js';
 

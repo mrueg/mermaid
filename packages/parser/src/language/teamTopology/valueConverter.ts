@@ -4,22 +4,13 @@ import { AbstractMermaidValueConverter } from '../common/index.js';
 
 export class TeamTopologyValueConverter extends AbstractMermaidValueConverter {
   protected override runCustomConverter(
-    rule: GrammarAST.AbstractRule,
-    input: string,
+    _rule: GrammarAST.AbstractRule,
+    _input: string,
     _cstNode: CstNode
   ): ValueType | undefined {
-    if (rule.name === 'TT_LABEL') {
-      // Strip outer [ and ] brackets
-      let result = input.replace(/^\[|]$/g, '').trim();
-      // Strip optional surrounding quotes
-      if (
-        (result.startsWith('"') && result.endsWith('"')) ||
-        (result.startsWith("'") && result.endsWith("'"))
-      ) {
-        result = result.slice(1, -1);
-      }
-      return result;
-    }
+    // All token types use default Langium conversion:
+    // - STRING: quotes stripped automatically
+    // - TT_TEAM_TYPE, TT_INTERACTION_MODE, TT_ARROW, ID: returned as-is
     return undefined;
   }
 }
