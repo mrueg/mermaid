@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Team Topologies Shapes Test</title>
+  <title>Team Topologies Shapes</title>
   <script type="module">
     import mermaid from './mermaid.esm.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'default' });
@@ -10,76 +10,97 @@
 </head>
 <body>
 <h1>Team Topologies Shapes</h1>
+<p>
+  Colors match the official
+  <a href="https://github.com/TeamTopologies/Team-Shape-Templates">Team Topologies shape templates</a>.
+  Interaction mode nodes use 50% fill-opacity to convey their transient nature,
+  per Team Topologies design guidelines.
+</p>
 
-<h2>Stream-aligned Team (rounded rectangle)</h2>
+<h2>Stream-aligned Team</h2>
 <pre class="mermaid">
 flowchart LR
-  A@{ shape: tt-stream, label: "Stream Team A" }
-  B@{ shape: stream-aligned-team, label: "Stream Team B" }
+  classDef streamAligned fill:#FFEDB8,stroke:#FFD966,color:#000000
+  A@{ shape: tt-stream, label: "Stream Team A" }:::streamAligned
+  B@{ shape: stream-aligned-team, label: "Stream Team B" }:::streamAligned
   A --> B
 </pre>
 
-<h2>Enabling Team (rounded rectangle)</h2>
+<h2>Enabling Team</h2>
 <pre class="mermaid">
 flowchart LR
-  A@{ shape: tt-enabling, label: "Enabling Team" }
-  B@{ shape: enabling-team, label: "Enabling Team 2" }
+  classDef enabling fill:#C9DFBE,stroke:#6AA84F,color:#000000
+  A@{ shape: tt-enabling, label: "Enabling Team" }:::enabling
+  B@{ shape: enabling-team, label: "Enabling Team 2" }:::enabling
   A --> B
 </pre>
 
-<h2>Complicated Subsystem (octagon)</h2>
+<h2>Complicated Subsystem Team</h2>
 <pre class="mermaid">
 flowchart LR
-  A@{ shape: tt-complicated, label: "Complicated Subsystem" }
-  B@{ shape: complicated-subsystem, label: "Complicated Subsystem 2" }
-  C@{ shape: oct, label: "Octagon" }
+  classDef complicated fill:#FBDBBA,stroke:#F6B26B,color:#000000
+  A@{ shape: tt-complicated, label: "Complicated Subsystem" }:::complicated
+  B@{ shape: complicated-subsystem, label: "Complicated Subsystem 2" }:::complicated
+  C@{ shape: oct, label: "Octagon" }:::complicated
   A --> B --> C
 </pre>
 
-<h2>Platform Team (rectangle)</h2>
+<h2>Platform Team</h2>
 <pre class="mermaid">
 flowchart LR
-  A@{ shape: tt-platform, label: "Platform Team" }
-  B@{ shape: platform-team, label: "Platform Team 2" }
+  classDef platform fill:#BBD2F6,stroke:#6D9EEB,color:#000000
+  A@{ shape: tt-platform, label: "Platform Team" }:::platform
+  B@{ shape: platform-team, label: "Platform Team 2" }:::platform
   A --> B
 </pre>
 
-<h2>Collaboration (parallelogram)</h2>
+<h2>Collaboration (interaction mode)</h2>
 <pre class="mermaid">
 flowchart LR
-  A@{ shape: tt-collab, label: "Collaboration" }
-  B@{ shape: collaboration, label: "Collaboration 2" }
+  classDef collaboration fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
+  A@{ shape: tt-collab, label: "Collaboration" }:::collaboration
+  B@{ shape: collaboration, label: "Collaboration 2" }:::collaboration
   A --> B
 </pre>
 
-<h2>Facilitation (circle)</h2>
+<h2>Facilitation (interaction mode)</h2>
 <pre class="mermaid">
 flowchart LR
-  A@{ shape: tt-facilitation, label: "Facilitation" }
-  B@{ shape: facilitation, label: "Facilitation 2" }
+  classDef facilitation fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
+  A@{ shape: tt-facilitation, label: "Facilitation" }:::facilitation
+  B@{ shape: facilitation, label: "Facilitation 2" }:::facilitation
   A --> B
 </pre>
 
-<h2>X-as-a-Service (triangle)</h2>
+<h2>X-as-a-Service (interaction mode)</h2>
 <pre class="mermaid">
 flowchart LR
-  A@{ shape: tt-xaas, label: "XaaS" }
-  B@{ shape: x-as-a-service, label: "X-as-a-Service" }
+  classDef xaas fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
+  A@{ shape: tt-xaas, label: "XaaS" }:::xaas
+  B@{ shape: x-as-a-service, label: "X-as-a-Service" }:::xaas
   A --> B
 </pre>
 
 <h2>Full Team Topology Example</h2>
 <pre class="mermaid">
 flowchart LR
-  sa1@{ shape: tt-stream, label: "Stream A" }
-  sa2@{ shape: tt-stream, label: "Stream B" }
-  en1@{ shape: tt-enabling, label: "Enabling Team" }
-  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }
-  pl1@{ shape: tt-platform, label: "Platform" }
-  collab@{ shape: tt-collab, label: "Collaboration" }
-  facil@{ shape: tt-facilitation, label: "Facilitation" }
-  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }
-  
+  classDef streamAligned fill:#FFEDB8,stroke:#FFD966,color:#000000
+  classDef enabling fill:#C9DFBE,stroke:#6AA84F,color:#000000
+  classDef complicated fill:#FBDBBA,stroke:#F6B26B,color:#000000
+  classDef platform fill:#BBD2F6,stroke:#6D9EEB,color:#000000
+  classDef collaboration fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
+  classDef facilitation fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
+  classDef xaas fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
+
+  sa1@{ shape: tt-stream, label: "Stream A" }:::streamAligned
+  sa2@{ shape: tt-stream, label: "Stream B" }:::streamAligned
+  en1@{ shape: tt-enabling, label: "Enabling Team" }:::enabling
+  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }:::complicated
+  pl1@{ shape: tt-platform, label: "Platform" }:::platform
+  collab@{ shape: tt-collab, label: "Collaboration" }:::collaboration
+  facil@{ shape: tt-facilitation, label: "Facilitation" }:::facilitation
+  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }:::xaas
+
   pl1 --- sa1
   pl1 --- sa2
   en1 --- facil
