@@ -3,6 +3,36 @@
   <head>
     <meta charset="utf-8" />
     <title>Team Topologies Shapes</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        max-width: 960px;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin: 12px 0 4px;
+        font-size: 0.9em;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend-swatch {
+        display: inline-block;
+        width: 36px;
+        height: 18px;
+        border: 2px solid;
+        flex-shrink: 0;
+      }
+      .legend-swatch.circle {
+        border-radius: 50%;
+        width: 18px;
+      }
+    </style>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({ startOnLoad: false, theme: 'default' });
@@ -109,17 +139,30 @@
       Colors match the official
       <a href="https://github.com/TeamTopologies/Team-Shape-Templates"
         >Team Topologies shape templates</a
-      >. Interaction modes (Collaboration, Facilitation, X-as-a-Service) appear as connector shapes
-      between two teams, overlapping each team node on both sides to match the official Team
-      Topologies visual convention. They use 50% fill-opacity to convey their transient nature.
-    </p>
-    <p>
-      For X-as-a-Service the <strong>base</strong> (left side) of the triangle connects to the
-      <strong>provider</strong> and the <strong>tip</strong> (right side) connects to the
-      <strong>consumer</strong>.
+      >. Interaction mode connectors overlap their adjacent team nodes on both sides (50%
+      fill-opacity) to convey their transient nature. The connector shape itself identifies the
+      interaction mode — no label needed.
     </p>
 
     <h2>Team Shapes</h2>
+    <div class="legend">
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#FFEDB8;border-color:#FFD966"></span>
+        Stream-aligned (rounded rectangle)
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#C9DFBE;border-color:#6AA84F"></span>
+        Enabling (rounded rectangle)
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#FBDBBA;border-color:#F6B26B"></span>
+        Complicated Subsystem (octagon)
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#BBD2F6;border-color:#6D9EEB"></span>
+        Platform (rectangle)
+      </div>
+    </div>
     <pre class="mermaid">
 flowchart LR
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
@@ -128,7 +171,7 @@ flowchart LR
   classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
   A@{ shape: tt-stream, label: "Stream-aligned" }
   B@{ shape: tt-enabling, label: "Enabling" }
-  C@{ shape: tt-complicated, label: "Complicated Subsystem" }
+  C@{ shape: tt-complicated, label: "Complicated\nSubsystem" }
   D@{ shape: tt-platform, label: "Platform" }
   class A sa
   class B en
@@ -137,17 +180,38 @@ flowchart LR
 </pre
     >
 
-    <h2>Collaboration (interaction mode connector)</h2>
-    <p>
-      Complicated Subsystem team collaborates with Stream-aligned team. The parallelogram shape sits
-      between them with no connecting lines.
-    </p>
+    <h2>Interaction Mode Connectors</h2>
+    <div class="legend">
+      <div class="legend-item">
+        <span
+          class="legend-swatch"
+          style="background:#E3E0EE;border-color:#967EE2;opacity:0.8"
+        ></span>
+        Collaboration (parallelogram)
+      </div>
+      <div class="legend-item">
+        <span
+          class="legend-swatch circle"
+          style="background:#E3EFDE;border-color:#78996B;opacity:0.8"
+        ></span>
+        Facilitation (circle)
+      </div>
+      <div class="legend-item">
+        <span
+          class="legend-swatch"
+          style="background:#DAE8FC;border-color:#6C8EBF;opacity:0.8"
+        ></span>
+        X-as-a-Service (right-pointing triangle — base=provider, tip=consumer)
+      </div>
+    </div>
+
+    <h3>Collaboration</h3>
     <pre class="mermaid">
 flowchart LR
   classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
-  classDef co fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
-  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }
+  classDef co fill:#E3E0EE,stroke:#967EE2,color:transparent,fill-opacity:0.5
+  cs1@{ shape: tt-complicated, label: "Complicated\nSubsystem" }
   collab@{ shape: tt-collab, label: "Collaboration" }
   sa1@{ shape: tt-stream, label: "Stream-aligned" }
   cs1 ~~~ collab ~~~ sa1
@@ -157,16 +221,12 @@ flowchart LR
 </pre
     >
 
-    <h2>Facilitation (interaction mode connector)</h2>
-    <p>
-      Enabling team facilitates Stream-aligned team. The circle shape sits between them with no
-      connecting lines.
-    </p>
+    <h3>Facilitation</h3>
     <pre class="mermaid">
 flowchart LR
   classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
-  classDef fa fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
+  classDef fa fill:#E3EFDE,stroke:#78996B,color:transparent,fill-opacity:0.5
   en1@{ shape: tt-enabling, label: "Enabling" }
   facil@{ shape: tt-facilitation, label: "Facilitation" }
   sa1@{ shape: tt-stream, label: "Stream-aligned" }
@@ -177,18 +237,15 @@ flowchart LR
 </pre
     >
 
-    <h2>X-as-a-Service (interaction mode connector)</h2>
-    <p>
-      Platform team (provider) offers a service consumed by Stream-aligned team (consumer). Base of
-      triangle ← provider. Tip of triangle → consumer.
-    </p>
+    <h3>X-as-a-Service</h3>
+    <p>Base of triangle (left) = provider &nbsp;·&nbsp; Tip of triangle (right) = consumer</p>
     <pre class="mermaid">
 flowchart LR
   classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
-  classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
+  classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:transparent,fill-opacity:0.5
   pl1@{ shape: tt-platform, label: "Platform\n(provider)" }
-  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }
+  xaas@{ shape: tt-xaas, label: "XaaS" }
   sa1@{ shape: tt-stream, label: "Stream-aligned\n(consumer)" }
   pl1 ~~~ xaas ~~~ sa1
   class pl1 pl
@@ -197,10 +254,13 @@ flowchart LR
 </pre
     >
 
-    <h2>Full Team Topology Example</h2>
+    <h2>Complex Example — E-Commerce Platform</h2>
     <p>
-      Three interaction modes shown side by side. Connector shapes overlap their adjacent team
-      nodes.
+      Four interactions across a realistic topology: the Dev Platform provides services to two
+      stream teams via X-as-a-Service; the QA Enablement team facilitates the Cart team; and the
+      Payment Gateway collaborates with the Checkout team. Each interaction is a separate chain
+      (<code>team ~~~ connector ~~~ team</code>). Connector shapes carry no text label — the shape
+      and color identify the interaction mode.
     </p>
     <pre class="mermaid">
 flowchart LR
@@ -208,33 +268,38 @@ flowchart LR
   classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
   classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
   classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
-  classDef co fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
-  classDef fa fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
-  classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
+  classDef co fill:#E3E0EE,stroke:#967EE2,color:transparent,fill-opacity:0.5
+  classDef fa fill:#E3EFDE,stroke:#78996B,color:transparent,fill-opacity:0.5
+  classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:transparent,fill-opacity:0.5
 
-  en1@{ shape: tt-enabling, label: "Enabling Team" }
-  facil@{ shape: tt-facilitation, label: "Facilitation" }
-  sa1@{ shape: tt-stream, label: "Stream A" }
+  p1@{ shape: tt-platform, label: "Dev Platform" }
+  xa1@{ shape: tt-xaas, label: "XaaS" }
+  cart1@{ shape: tt-stream, label: "Cart Team" }
 
-  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }
-  collab@{ shape: tt-collab, label: "Collaboration" }
-  sa2@{ shape: tt-stream, label: "Stream B" }
+  p2@{ shape: tt-platform, label: "Dev Platform" }
+  xa2@{ shape: tt-xaas, label: "XaaS" }
+  checkout1@{ shape: tt-stream, label: "Checkout Team" }
 
-  pl1@{ shape: tt-platform, label: "Platform" }
-  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }
-  sa3@{ shape: tt-stream, label: "Stream C" }
+  en1@{ shape: tt-enabling, label: "QA Enablement" }
+  fa1@{ shape: tt-facilitation, label: "Facilitation" }
+  cart2@{ shape: tt-stream, label: "Cart Team" }
 
-  en1 ~~~ facil ~~~ sa1
-  cs1 ~~~ collab ~~~ sa2
-  pl1 ~~~ xaas ~~~ sa3
+  cs1@{ shape: tt-complicated, label: "Payment\nGateway" }
+  co1@{ shape: tt-collab, label: "Collaboration" }
+  checkout2@{ shape: tt-stream, label: "Checkout Team" }
 
-  class sa1,sa2,sa3 sa
+  p1 ~~~ xa1 ~~~ cart1
+  p2 ~~~ xa2 ~~~ checkout1
+  en1 ~~~ fa1 ~~~ cart2
+  cs1 ~~~ co1 ~~~ checkout2
+
+  class cart1,cart2,checkout1,checkout2 sa
   class en1 en
   class cs1 cs
-  class pl1 pl
-  class collab co
-  class facil fa
-  class xaas xa
+  class p1,p2 pl
+  class co1 co
+  class fa1 fa
+  class xa1,xa2 xa
 </pre
     >
   </body>
