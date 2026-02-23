@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { TeamTopology } from '../src/language/index.js';
+import { parseInteractionLine } from '../src/language/teamTopology/module.js';
 import {
   expectNoErrorsOrAlternatives,
   teamTopologyParse as parse,
@@ -126,11 +127,11 @@ describe('teamTopology', () => {
   f1--XaaS->f2`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      const interaction = result.value.interactions[0];
-      expect(interaction.lhs).toBe('f1');
-      expect(interaction.mode).toBe('XaaS');
-      expect(interaction.arrow).toBe('->');
-      expect(interaction.rhs).toBe('f2');
+      const parsed = parseInteractionLine(result.value.interactions[0].line);
+      expect(parsed.lhs).toBe('f1');
+      expect(parsed.mode).toBe('XaaS');
+      expect(parsed.arrow).toBe('->');
+      expect(parsed.rhs).toBe('f2');
     });
 
     it('should parse a Facilitation interaction with single arrow', () => {
@@ -141,11 +142,11 @@ describe('teamTopology', () => {
   "Enabling Team A"--Facilitation->"Stream A"`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      const interaction = result.value.interactions[0];
-      expect(interaction.lhs).toBe('Enabling Team A');
-      expect(interaction.mode).toBe('Facilitation');
-      expect(interaction.arrow).toBe('->');
-      expect(interaction.rhs).toBe('Stream A');
+      const parsed = parseInteractionLine(result.value.interactions[0].line);
+      expect(parsed.lhs).toBe('Enabling Team A');
+      expect(parsed.mode).toBe('Facilitation');
+      expect(parsed.arrow).toBe('->');
+      expect(parsed.rhs).toBe('Stream A');
     });
 
     it('should parse a Collaboration interaction with double arrow', () => {
@@ -156,11 +157,11 @@ describe('teamTopology', () => {
   "Complicated Subsystem team"--Collaboration-->"Stream A"`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
-      const interaction = result.value.interactions[0];
-      expect(interaction.lhs).toBe('Complicated Subsystem team');
-      expect(interaction.mode).toBe('Collaboration');
-      expect(interaction.arrow).toBe('-->');
-      expect(interaction.rhs).toBe('Stream A');
+      const parsed = parseInteractionLine(result.value.interactions[0].line);
+      expect(parsed.lhs).toBe('Complicated Subsystem team');
+      expect(parsed.mode).toBe('Collaboration');
+      expect(parsed.arrow).toBe('-->');
+      expect(parsed.rhs).toBe('Stream A');
     });
 
     it('should parse multiple interactions', () => {
@@ -175,9 +176,31 @@ describe('teamTopology', () => {
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.interactions).toHaveLength(3);
-      expect(result.value.interactions[0].mode).toBe('Facilitation');
-      expect(result.value.interactions[1].mode).toBe('XaaS');
-      expect(result.value.interactions[2].mode).toBe('Collaboration');
+      expect(parseInteractionLine(result.value.interactions[0].line).mode).toBe('Facilitation');
+      expect(parseInteractionLine(result.value.interactions[1].line).mode).toBe('XaaS');
+      expect(parseInteractionLine(result.value.interactions[2].line).mode).toBe('Collaboration');
+    });
+  });
+
+  describe('parseInteractionLine utility', () => {
+    it('should parse bare names with single arrow', () => {
+      const parsed = parseInteractionLine('f1--XaaS->f2');
+      expect(parsed).toEqual({ lhs: 'f1', mode: 'XaaS', arrow: '->', rhs: 'f2' });
+    });
+
+    it('should parse quoted names with double arrow', () => {
+      const parsed = parseInteractionLine('"Stream A"--Collaboration-->"Stream B"');
+      expect(parsed).toEqual({
+        lhs: 'Stream A',
+        mode: 'Collaboration',
+        arrow: '-->',
+        rhs: 'Stream B',
+      });
+    });
+
+    it('should parse mixed bare/quoted names', () => {
+      const parsed = parseInteractionLine('"Enabling Team A"--Facilitation->sa');
+      expect(parsed).toEqual({ lhs: 'Enabling Team A', mode: 'Facilitation', arrow: '->', rhs: 'sa' });
     });
   });
 

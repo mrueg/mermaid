@@ -80,3 +80,63 @@ export function createTeamTopologyServices(
   shared.ServiceRegistry.register(TeamTopology);
   return { shared, TeamTopology };
 }
+
+export type InteractionMode = 'Collaboration' | 'Facilitation' | 'XaaS';
+export type InteractionArrow = '->' | '-->';
+
+export interface ParsedInteraction {
+  lhs: string;
+  mode: InteractionMode;
+  arrow: InteractionArrow;
+  rhs: string;
+}
+
+/**
+ * Parse a raw `TT_INTERACTION_LINE` string into its structured components.
+ *
+ * The line has the form:  lhs--Mode->rhs  or  lhs--Mode-->rhs
+ * where lhs/rhs are bare identifiers or quoted strings.
+ *
+ * @example
+ * parseInteractionLine('f1--XaaS->f2')
+ * // => { lhs: 'f1', mode: 'XaaS', arrow: '->', rhs: 'f2' }
+ *
+ * @example
+ * parseInteractionLine('"Stream A"--Collaboration-->"Stream B"')
+ * // => { lhs: 'Stream A', mode: 'Collaboration', arrow: '-->', rhs: 'Stream B' }
+ */
+export function parseInteractionLine(line: string): ParsedInteraction {
+  // Each name is either:
+  //   "double-quoted"  => group 1 (double) or group 2 (single)
+  //   'single-quoted'  => group 2
+  //   bareWord         => group 3 (\w+)
+  // Then -- separates the name from the mode.
+  // Mode is group 4 (Collaboration | Facilitation | XaaS).
+  // Arrow is group 5 (--> or ->).
+  // rhs name follows the same double/single/bare pattern (groups 6, 7, 8).
+  const TT_NAME = /(?:"([^"]*)"|'([^']*)'|(\w+))/;
+  const TT_MODE = /(Collaboration|Facilitation|XaaS)/;
+  const TT_ARROW = /(-->|->)/;
+  const pattern = new RegExp(
+    `^${TT_NAME.source}--${TT_MODE.source}${TT_ARROW.source}${TT_NAME.source}$`
+  );
+
+  const match = pattern.exec(line);
+  if (!match) {
+    throw new Error(`Invalid TT interaction line: ${JSON.stringify(line)}`);
+  }
+
+  // lhs: one of double-quoted (1), single-quoted (2), or bare (3)
+  const lhs = match[1] ?? match[2] ?? match[3];
+  const mode = match[4] as InteractionMode;
+  const arrow = match[5] as InteractionArrow;
+  // rhs: one of double-quoted (6), single-quoted (7), or bare (8)
+  const rhs = match[6] ?? match[7] ?? match[8];
+
+  if (lhs === undefined || rhs === undefined) {
+    // Should be unreachable given the pattern requires a name on each side
+    throw new Error(`Failed to extract lhs/rhs from interaction line: ${JSON.stringify(line)}`);
+  }
+
+  return { lhs, mode, arrow, rhs };
+}
