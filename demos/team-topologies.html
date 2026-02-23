@@ -1,30 +1,126 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Team Topologies Shapes</title>
-  <script type="module">
-    import mermaid from './mermaid.esm.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'default' });
-  </script>
-</head>
-<body>
-<h1>Team Topologies Shapes</h1>
-<p>
-  Colors match the official
-  <a href="https://github.com/TeamTopologies/Team-Shape-Templates">Team Topologies shape templates</a>.
-  Interaction modes (Collaboration, Facilitation, X-as-a-Service) appear as connector shapes
-  between two teams with no visible connecting lines (<code>~~~</code> invisible links).
-  They use 50% fill-opacity to convey their transient nature per Team Topologies design guidelines.
-</p>
-<p>
-  For X-as-a-Service the <strong>base</strong> (left side) of the triangle connects to the
-  <strong>provider</strong> and the <strong>tip</strong> (right side) connects to the
-  <strong>consumer</strong>.
-</p>
+  <head>
+    <meta charset="utf-8" />
+    <title>Team Topologies Shapes</title>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
 
-<h2>Team Shapes</h2>
-<pre class="mermaid">
+      /**
+       * After Mermaid renders an SVG, shift interaction-mode connector nodes
+       * (classDef classes "co", "fa", "xa") so they overlap their left and right
+       * team neighbours by OVERLAP pixels — matching the official Team Topologies
+       * visual convention where the interaction symbol straddles the team boundary.
+       *
+       * Mermaid's dagre layout places nodes with rankSpacing (default 50 px) between
+       * each pair.  We compute the actual gap from the rendered bounding boxes and
+       * translate the connector and its right-side neighbour to eliminate the gap and
+       * create the desired overlap.  The SVG viewBox is then updated so nothing is clipped.
+       */
+      function applyTTOverlap(svg) {
+        const CONNECTOR_CLASSES = new Set(['co', 'fa', 'xa']);
+        const OVERLAP = 20; // px each side of connector overlaps into adjacent team node
+
+        function getXY(el) {
+          const m = (el.getAttribute('transform') || '').match(
+            /translate\(\s*([^,\s)]+)[\s,]+([^,\s)]+)/
+          );
+          return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : null;
+        }
+        function setXY(el, x, y) {
+          el.setAttribute('transform', `translate(${x}, ${y})`);
+        }
+
+        const allNodes = [...svg.querySelectorAll('g.node')];
+        const connectors = allNodes.filter((n) =>
+          [...n.classList].some((c) => CONNECTOR_CLASSES.has(c))
+        );
+        if (!connectors.length) return;
+
+        for (const conn of connectors) {
+          const connPos = getXY(conn);
+          if (!connPos) continue;
+          const connBBox = conn.getBBox();
+          // connBBox.x is negative (= -halfWidth) since nodes are centred on their translate point
+          const connLeftEdge = connPos.x + connBBox.x;
+          const connRightEdgeOffset = connBBox.x + connBBox.width; // = +halfWidth
+
+          // Nodes on the same horizontal rank (same y within 5 px tolerance)
+          const sameRank = allNodes.filter((n) => {
+            if (n === conn) return false;
+            const pos = getXY(n);
+            return pos && Math.abs(pos.y - connPos.y) < 5;
+          });
+
+          // Closest left neighbour
+          const leftNode = sameRank
+            .filter((n) => getXY(n).x < connPos.x)
+            .sort((a, b) => getXY(b).x - getXY(a).x)[0];
+          if (!leftNode) continue;
+
+          const leftBBox = leftNode.getBBox();
+          const leftRightEdge = getXY(leftNode).x + leftBBox.x + leftBBox.width;
+          const gapLeft = connLeftEdge - leftRightEdge; // current gap (≈ rankSpacing)
+
+          // Translate connector left so its left edge is OVERLAP px inside the left team node
+          const shift = gapLeft + OVERLAP;
+          const newConnX = connPos.x - shift;
+          setXY(conn, newConnX, connPos.y);
+
+          const newConnRightEdge = newConnX + connRightEdgeOffset;
+
+          // Translate right neighbour(s) so their left edge is OVERLAP px inside the connector
+          const rightNodes = sameRank
+            .filter((n) => getXY(n).x > connPos.x)
+            .sort((a, b) => getXY(a).x - getXY(b).x);
+
+          for (const rightNode of rightNodes) {
+            const rightPos = getXY(rightNode);
+            const rightBBoxX = rightNode.getBBox().x; // negative (= -halfWidth)
+            const desiredLeftEdge = newConnRightEdge - OVERLAP;
+            setXY(rightNode, desiredLeftEdge - rightBBoxX, rightPos.y);
+          }
+        }
+
+        // Recompute viewBox to avoid clipping after nodes have shifted
+        const nodesGroup = svg.querySelector('g.nodes');
+        if (nodesGroup) {
+          const bb = nodesGroup.getBBox();
+          const pad = 20;
+          svg.setAttribute(
+            'viewBox',
+            `${bb.x - pad} ${bb.y - pad} ${bb.width + 2 * pad} ${bb.height + 2 * pad}`
+          );
+          svg.style.width = `${bb.width + 2 * pad}px`;
+          svg.style.height = `${bb.height + 2 * pad}px`;
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        await mermaid.run();
+        document.querySelectorAll('.mermaid svg').forEach(applyTTOverlap);
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Team Topologies Shapes</h1>
+    <p>
+      Colors match the official
+      <a href="https://github.com/TeamTopologies/Team-Shape-Templates"
+        >Team Topologies shape templates</a
+      >. Interaction modes (Collaboration, Facilitation, X-as-a-Service) appear as connector shapes
+      between two teams, overlapping each team node on both sides to match the official Team
+      Topologies visual convention. They use 50% fill-opacity to convey their transient nature.
+    </p>
+    <p>
+      For X-as-a-Service the <strong>base</strong> (left side) of the triangle connects to the
+      <strong>provider</strong> and the <strong>tip</strong> (right side) connects to the
+      <strong>consumer</strong>.
+    </p>
+
+    <h2>Team Shapes</h2>
+    <pre class="mermaid">
 flowchart LR
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
   classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
@@ -38,12 +134,15 @@ flowchart LR
   class B en
   class C cs
   class D pl
-</pre>
+</pre
+    >
 
-<h2>Collaboration (interaction mode connector)</h2>
-<p>Complicated Subsystem team collaborates with Stream-aligned team.
-The parallelogram shape sits between them with no connecting lines.</p>
-<pre class="mermaid">
+    <h2>Collaboration (interaction mode connector)</h2>
+    <p>
+      Complicated Subsystem team collaborates with Stream-aligned team. The parallelogram shape sits
+      between them with no connecting lines.
+    </p>
+    <pre class="mermaid">
 flowchart LR
   classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
@@ -55,12 +154,15 @@ flowchart LR
   class cs1 cs
   class sa1 sa
   class collab co
-</pre>
+</pre
+    >
 
-<h2>Facilitation (interaction mode connector)</h2>
-<p>Enabling team facilitates Stream-aligned team.
-The circle shape sits between them with no connecting lines.</p>
-<pre class="mermaid">
+    <h2>Facilitation (interaction mode connector)</h2>
+    <p>
+      Enabling team facilitates Stream-aligned team. The circle shape sits between them with no
+      connecting lines.
+    </p>
+    <pre class="mermaid">
 flowchart LR
   classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
@@ -72,12 +174,15 @@ flowchart LR
   class en1 en
   class sa1 sa
   class facil fa
-</pre>
+</pre
+    >
 
-<h2>X-as-a-Service (interaction mode connector)</h2>
-<p>Platform team (provider) offers a service consumed by Stream-aligned team (consumer).
-Base of triangle ← provider. Tip of triangle → consumer.</p>
-<pre class="mermaid">
+    <h2>X-as-a-Service (interaction mode connector)</h2>
+    <p>
+      Platform team (provider) offers a service consumed by Stream-aligned team (consumer). Base of
+      triangle ← provider. Tip of triangle → consumer.
+    </p>
+    <pre class="mermaid">
 flowchart LR
   classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
@@ -89,11 +194,15 @@ flowchart LR
   class pl1 pl
   class sa1 sa
   class xaas xa
-</pre>
+</pre
+    >
 
-<h2>Full Team Topology Example</h2>
-<p>Interaction mode shapes sit directly between teams with no visible connecting lines.</p>
-<pre class="mermaid">
+    <h2>Full Team Topology Example</h2>
+    <p>
+      Three interaction modes shown side by side. Connector shapes overlap their adjacent team
+      nodes.
+    </p>
+    <pre class="mermaid">
 flowchart LR
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
   classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
@@ -103,28 +212,30 @@ flowchart LR
   classDef fa fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
   classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
 
-  sa1@{ shape: tt-stream, label: "Stream A" }
-  sa2@{ shape: tt-stream, label: "Stream B" }
   en1@{ shape: tt-enabling, label: "Enabling Team" }
-  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }
-  pl1@{ shape: tt-platform, label: "Platform" }
-  collab@{ shape: tt-collab, label: "Collaboration" }
   facil@{ shape: tt-facilitation, label: "Facilitation" }
-  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }
+  sa1@{ shape: tt-stream, label: "Stream A" }
 
-  pl1 --- sa1
-  pl1 --- sa2
+  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }
+  collab@{ shape: tt-collab, label: "Collaboration" }
+  sa2@{ shape: tt-stream, label: "Stream B" }
+
+  pl1@{ shape: tt-platform, label: "Platform" }
+  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }
+  sa3@{ shape: tt-stream, label: "Stream C" }
+
   en1 ~~~ facil ~~~ sa1
   cs1 ~~~ collab ~~~ sa2
-  pl1 ~~~ xaas ~~~ sa2
+  pl1 ~~~ xaas ~~~ sa3
 
-  class sa1,sa2 sa
+  class sa1,sa2,sa3 sa
   class en1 en
   class cs1 cs
   class pl1 pl
   class collab co
   class facil fa
   class xaas xa
-</pre>
-</body>
+</pre
+    >
+  </body>
 </html>
