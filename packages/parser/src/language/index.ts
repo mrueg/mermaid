@@ -13,6 +13,9 @@ export {
   Commit,
   Merge,
   Statement,
+  TeamTopology,
+  Team,
+  Interaction,
   isInfo,
   isPacket,
   isPacketBlock,
@@ -24,6 +27,9 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  isTeamTopology,
+  isTeam,
+  isInteraction,
 } from './generated/ast.js';
 
 export {
@@ -35,6 +41,7 @@ export {
   GitGraphGrammarGeneratedModule as GitGraphGeneratedModule,
   RadarGrammarGeneratedModule as RadarGeneratedModule,
   TreemapGrammarGeneratedModule as TreemapGeneratedModule,
+  TeamTopologyGrammarGeneratedModule as TeamTopologyGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -45,3 +52,4 @@ export * from './pie/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
+export * from './teamTopology/index.js';
