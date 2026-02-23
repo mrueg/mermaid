@@ -21,64 +21,71 @@
 <pre class="mermaid">
 flowchart LR
   classDef streamAligned fill:#FFEDB8,stroke:#FFD966,color:#000000
-  A@{ shape: tt-stream, label: "Stream Team A" }:::streamAligned
-  B@{ shape: stream-aligned-team, label: "Stream Team B" }:::streamAligned
+  A@{ shape: tt-stream, label: "Stream Team A" }
+  B@{ shape: stream-aligned-team, label: "Stream Team B" }
   A --> B
+  class A,B streamAligned
 </pre>
 
 <h2>Enabling Team</h2>
 <pre class="mermaid">
 flowchart LR
   classDef enabling fill:#C9DFBE,stroke:#6AA84F,color:#000000
-  A@{ shape: tt-enabling, label: "Enabling Team" }:::enabling
-  B@{ shape: enabling-team, label: "Enabling Team 2" }:::enabling
+  A@{ shape: tt-enabling, label: "Enabling Team" }
+  B@{ shape: enabling-team, label: "Enabling Team 2" }
   A --> B
+  class A,B enabling
 </pre>
 
 <h2>Complicated Subsystem Team</h2>
 <pre class="mermaid">
 flowchart LR
   classDef complicated fill:#FBDBBA,stroke:#F6B26B,color:#000000
-  A@{ shape: tt-complicated, label: "Complicated Subsystem" }:::complicated
-  B@{ shape: complicated-subsystem, label: "Complicated Subsystem 2" }:::complicated
-  C@{ shape: oct, label: "Octagon" }:::complicated
+  A@{ shape: tt-complicated, label: "Complicated Subsystem" }
+  B@{ shape: complicated-subsystem, label: "Complicated Subsystem 2" }
+  C@{ shape: oct, label: "Octagon" }
   A --> B --> C
+  class A,B,C complicated
 </pre>
 
 <h2>Platform Team</h2>
 <pre class="mermaid">
 flowchart LR
   classDef platform fill:#BBD2F6,stroke:#6D9EEB,color:#000000
-  A@{ shape: tt-platform, label: "Platform Team" }:::platform
-  B@{ shape: platform-team, label: "Platform Team 2" }:::platform
+  A@{ shape: tt-platform, label: "Platform Team" }
+  B@{ shape: platform-team, label: "Platform Team 2" }
   A --> B
+  class A,B platform
 </pre>
 
 <h2>Collaboration (interaction mode)</h2>
 <pre class="mermaid">
 flowchart LR
   classDef collaboration fill:#E3E0EE,stroke:#967EE2,color:#000000,fill-opacity:0.5
-  A@{ shape: tt-collab, label: "Collaboration" }:::collaboration
-  B@{ shape: collaboration, label: "Collaboration 2" }:::collaboration
+  A@{ shape: tt-collab, label: "Collaboration" }
+  B@{ shape: collaboration, label: "Collaboration 2" }
   A --> B
+  class A,B collaboration
 </pre>
 
 <h2>Facilitation (interaction mode)</h2>
 <pre class="mermaid">
 flowchart LR
   classDef facilitation fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
-  A@{ shape: tt-facilitation, label: "Facilitation" }:::facilitation
-  B@{ shape: facilitation, label: "Facilitation 2" }:::facilitation
+  A@{ shape: tt-facilitation, label: "Facilitation" }
+  B@{ shape: facilitation, label: "Facilitation 2" }
   A --> B
+  class A,B facilitation
 </pre>
 
 <h2>X-as-a-Service (interaction mode)</h2>
 <pre class="mermaid">
 flowchart LR
   classDef xaas fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
-  A@{ shape: tt-xaas, label: "XaaS" }:::xaas
-  B@{ shape: x-as-a-service, label: "X-as-a-Service" }:::xaas
+  A@{ shape: tt-xaas, label: "XaaS" }
+  B@{ shape: x-as-a-service, label: "X-as-a-Service" }
   A --> B
+  class A,B xaas
 </pre>
 
 <h2>Full Team Topology Example</h2>
@@ -92,14 +99,14 @@ flowchart LR
   classDef facilitation fill:#E3EFDE,stroke:#78996B,color:#000000,fill-opacity:0.5
   classDef xaas fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
 
-  sa1@{ shape: tt-stream, label: "Stream A" }:::streamAligned
-  sa2@{ shape: tt-stream, label: "Stream B" }:::streamAligned
-  en1@{ shape: tt-enabling, label: "Enabling Team" }:::enabling
-  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }:::complicated
-  pl1@{ shape: tt-platform, label: "Platform" }:::platform
-  collab@{ shape: tt-collab, label: "Collaboration" }:::collaboration
-  facil@{ shape: tt-facilitation, label: "Facilitation" }:::facilitation
-  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }:::xaas
+  sa1@{ shape: tt-stream, label: "Stream A" }
+  sa2@{ shape: tt-stream, label: "Stream B" }
+  en1@{ shape: tt-enabling, label: "Enabling Team" }
+  cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }
+  pl1@{ shape: tt-platform, label: "Platform" }
+  collab@{ shape: tt-collab, label: "Collaboration" }
+  facil@{ shape: tt-facilitation, label: "Facilitation" }
+  xaas@{ shape: tt-xaas, label: "X-as-a-Service" }
 
   pl1 --- sa1
   pl1 --- sa2
@@ -109,6 +116,14 @@ flowchart LR
   collab --- sa2
   sa1 --- xaas
   xaas --- sa2
+
+  class sa1,sa2 streamAligned
+  class en1 enabling
+  class cs1 complicated
+  class pl1 platform
+  class collab collaboration
+  class facil facilitation
+  class xaas xaas
 </pre>
 </body>
 </html>
