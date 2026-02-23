@@ -55,6 +55,7 @@ import { tiltedCylinder } from './shapes/tiltedCylinder.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
 import { triangle } from './shapes/triangle.js';
+import { triangleRight } from './shapes/triangleRight.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
@@ -357,8 +358,16 @@ export const shapesDefs = [
     name: 'Triangle',
     shortName: 'tri',
     description: 'Extraction process',
-    aliases: ['extract', 'triangle', 'tt-xaas', 'x-as-a-service'],
+    aliases: ['extract', 'triangle'],
     handler: triangle,
+  },
+  {
+    semanticName: 'X-as-a-Service',
+    name: 'Triangle Right',
+    shortName: 'tri-right',
+    description: 'Right-pointing triangle — service provider on the base (left), consumer at the tip (right)',
+    aliases: ['tt-xaas', 'x-as-a-service'],
+    handler: triangleRight,
   },
   {
     semanticName: 'Internal Storage',

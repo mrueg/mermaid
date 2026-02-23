@@ -274,7 +274,7 @@ describe('Test Alias for shapes', function () {
 
   // tt-xaas | x-as-a-service
   it('should support Team Topologies alias for x-as-a-service interaction mode shape', function () {
-    expect(shapes['tt-xaas']).toBe(shapes.tri);
-    expect(shapes['x-as-a-service']).toBe(shapes.tri);
+    expect(shapes['tt-xaas']).toBe(shapes['tri-right']);
+    expect(shapes['x-as-a-service']).toBe(shapes['tri-right']);
   });
 });

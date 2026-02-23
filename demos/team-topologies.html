@@ -14,8 +14,13 @@
   Colors match the official
   <a href="https://github.com/TeamTopologies/Team-Shape-Templates">Team Topologies shape templates</a>.
   Interaction modes (Collaboration, Facilitation, X-as-a-Service) appear as connector shapes
-  on the line between two teams — not as endpoint nodes.
+  between two teams with no visible connecting lines (<code>~~~</code> invisible links).
   They use 50% fill-opacity to convey their transient nature per Team Topologies design guidelines.
+</p>
+<p>
+  For X-as-a-Service the <strong>base</strong> (left side) of the triangle connects to the
+  <strong>provider</strong> and the <strong>tip</strong> (right side) connects to the
+  <strong>consumer</strong>.
 </p>
 
 <h2>Team Shapes</h2>
@@ -36,7 +41,8 @@ flowchart LR
 </pre>
 
 <h2>Collaboration (interaction mode connector)</h2>
-<p>Complicated Subsystem team collaborates with Stream-aligned team — the parallelogram shape sits on the connection line.</p>
+<p>Complicated Subsystem team collaborates with Stream-aligned team.
+The parallelogram shape sits between them with no connecting lines.</p>
 <pre class="mermaid">
 flowchart LR
   classDef cs fill:#FBDBBA,stroke:#F6B26B,color:#000000
@@ -45,14 +51,15 @@ flowchart LR
   cs1@{ shape: tt-complicated, label: "Complicated Subsystem" }
   collab@{ shape: tt-collab, label: "Collaboration" }
   sa1@{ shape: tt-stream, label: "Stream-aligned" }
-  cs1 --- collab --- sa1
+  cs1 ~~~ collab ~~~ sa1
   class cs1 cs
   class sa1 sa
   class collab co
 </pre>
 
 <h2>Facilitation (interaction mode connector)</h2>
-<p>Enabling team facilitates Stream-aligned team — the circle shape sits on the connection line.</p>
+<p>Enabling team facilitates Stream-aligned team.
+The circle shape sits between them with no connecting lines.</p>
 <pre class="mermaid">
 flowchart LR
   classDef en fill:#C9DFBE,stroke:#6AA84F,color:#000000
@@ -61,30 +68,31 @@ flowchart LR
   en1@{ shape: tt-enabling, label: "Enabling" }
   facil@{ shape: tt-facilitation, label: "Facilitation" }
   sa1@{ shape: tt-stream, label: "Stream-aligned" }
-  en1 --- facil --- sa1
+  en1 ~~~ facil ~~~ sa1
   class en1 en
   class sa1 sa
   class facil fa
 </pre>
 
 <h2>X-as-a-Service (interaction mode connector)</h2>
-<p>Platform team provides a service consumed by Stream-aligned team — the triangle shape sits on the connection line.</p>
+<p>Platform team (provider) offers a service consumed by Stream-aligned team (consumer).
+Base of triangle ← provider. Tip of triangle → consumer.</p>
 <pre class="mermaid">
 flowchart LR
   classDef pl fill:#BBD2F6,stroke:#6D9EEB,color:#000000
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
   classDef xa fill:#DAE8FC,stroke:#6C8EBF,color:#000000,fill-opacity:0.5
-  pl1@{ shape: tt-platform, label: "Platform" }
+  pl1@{ shape: tt-platform, label: "Platform\n(provider)" }
   xaas@{ shape: tt-xaas, label: "X-as-a-Service" }
-  sa1@{ shape: tt-stream, label: "Stream-aligned" }
-  pl1 --- xaas --- sa1
+  sa1@{ shape: tt-stream, label: "Stream-aligned\n(consumer)" }
+  pl1 ~~~ xaas ~~~ sa1
   class pl1 pl
   class sa1 sa
   class xaas xa
 </pre>
 
 <h2>Full Team Topology Example</h2>
-<p>Interaction mode shapes sit on the connection lines between teams. No arrowheads — direction is not implied by the interaction modes.</p>
+<p>Interaction mode shapes sit directly between teams with no visible connecting lines.</p>
 <pre class="mermaid">
 flowchart LR
   classDef sa fill:#FFEDB8,stroke:#FFD966,color:#000000
@@ -106,9 +114,9 @@ flowchart LR
 
   pl1 --- sa1
   pl1 --- sa2
-  en1 --- facil --- sa1
-  cs1 --- collab --- sa2
-  sa1 --- xaas --- sa2
+  en1 ~~~ facil ~~~ sa1
+  cs1 ~~~ collab ~~~ sa2
+  pl1 ~~~ xaas ~~~ sa2
 
   class sa1,sa2 sa
   class en1 en
