@@ -16,7 +16,9 @@ export async function octagon<T extends SVGGraphicsElement>(parent: D3Selection<
   const w = Math.max(minWidth, bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
   const h = Math.max(minHeight, bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
 
-  // The cut amount at each corner to form the octagon shape
+  // The cut amount at each corner to form the octagon shape.
+  // Using (√2 - 1) / 2 of the minimum dimension creates 45-degree chamfered corners,
+  // resulting in a regular octagon where all sides are equal length.
   const cut = (Math.min(w, h) * (Math.SQRT2 - 1)) / 2;
 
   const points = [
